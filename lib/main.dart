@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 void main() {
@@ -37,5 +39,29 @@ class MortgageApp extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class Mortgage {
+  double amount;
+  int years;
+  double rate;
+
+  // Values come from the lab example
+  Mortgage({
+    this.amount = 100000,
+    this.years = 30,
+    this.rate = 0.035,
+  });
+
+  double monthlyPayment() {
+    double monthlyRate = rate / 12;
+    double temp = pow(1 / (1 + monthlyRate), years * 12).toDouble();
+
+    return amount * monthlyRate / (1 - temp);
+  }
+
+  double totalPayment() {
+    return monthlyPayment() * years * 12;
   }
 }
