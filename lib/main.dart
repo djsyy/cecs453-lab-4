@@ -3,11 +3,13 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MortgageApp());
+  runApp(MortgageApp());
 }
 
 class MortgageApp extends StatelessWidget {
-  const MortgageApp({super.key});
+  MortgageApp({super.key});
+
+  final Mortgage mortgage = Mortgage();
 
   @override
   Widget build(BuildContext context) {
@@ -20,15 +22,21 @@ class MortgageApp extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Mortgage Amount: \$100000'),
+              Text('Mortgage Amount: \$${mortgage.amount.toStringAsFixed(2)}'),
               const SizedBox(height: 16),
-              const Text('Number of Years: 30'),
+              Text('Number of Years: ${mortgage.years}'),
               const SizedBox(height: 16),
-              const Text('Interest Rate: 3.5%'),
+              Text(
+                'Interest Rate: ${(mortgage.rate * 100).toStringAsFixed(2)}%',
+              ),
               const SizedBox(height: 16),
-              const Text('Monthly Payment: Coming soon'),
+              Text(
+                'Monthly Payment: \$${mortgage.monthlyPayment().toStringAsFixed(2)}',
+              ),
               const SizedBox(height: 16),
-              const Text('Total Payment: Coming soon'),
+              Text(
+                'Total Payment: \$${mortgage.totalPayment().toStringAsFixed(2)}',
+              ),
               const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: () {},
