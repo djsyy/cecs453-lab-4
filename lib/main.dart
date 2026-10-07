@@ -39,7 +39,14 @@ class MortgageApp extends StatelessWidget {
               ),
               const SizedBox(height: 32),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ModifyScreen(),
+                    ),
+                  );
+                },
                 child: const Text('MODIFY DATA'),
               ),
             ],
@@ -71,5 +78,24 @@ class Mortgage {
 
   double totalPayment() {
     return monthlyPayment() * years * 12;
+  }
+}
+
+class ModifyScreen extends StatelessWidget {
+  const ModifyScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Modify Mortgage Data')),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('DONE'),
+        ),
+      ),
+    );
   }
 }
