@@ -81,19 +81,53 @@ class Mortgage {
   }
 }
 
-class ModifyScreen extends StatelessWidget {
+class ModifyScreen extends StatefulWidget {
   const ModifyScreen({super.key});
+
+  @override
+  State<ModifyScreen> createState() => _ModifyScreenState();
+}
+
+class _ModifyScreenState extends State<ModifyScreen> {
+  final TextEditingController amountController = TextEditingController(
+    text: '100000',
+  );
+  final TextEditingController yearsController = TextEditingController(text: '30');
+
+  @override
+  void dispose() {
+    amountController.dispose();
+    yearsController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Modify Mortgage Data')),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text('DONE'),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: amountController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(labelText: 'Mortgage Amount'),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: yearsController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(labelText: 'Number of Years'),
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('DONE'),
+            ),
+          ],
         ),
       ),
     );
