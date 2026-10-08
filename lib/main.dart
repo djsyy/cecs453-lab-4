@@ -93,6 +93,18 @@ class _ModifyScreenState extends State<ModifyScreen> {
     text: '100000',
   );
   final TextEditingController yearsController = TextEditingController(text: '30');
+  final List<double> rates = [];
+  int selectedRateIndex = 6;
+  double selectedRate = 0.035;
+
+  @override
+  void initState() {
+    super.initState();
+
+    for (int index = 0; index <= 52; index++) {
+      rates.add(0.02 + (index * 0.0025));
+    }
+  }
 
   @override
   void dispose() {
@@ -120,7 +132,31 @@ class _ModifyScreenState extends State<ModifyScreen> {
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(labelText: 'Number of Years'),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text('Interest Rate'),
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: rates.length,
+                itemBuilder: (context, index) {
+                  double rate = rates[index];
+
+                  return ListTile(
+                    title: Text('${(rate * 100).toStringAsFixed(2)}%'),
+                    selected: index == selectedRateIndex,
+                    onTap: () {
+                      setState(() {
+                        selectedRateIndex = index;
+                        selectedRate = rate;
+                      });
+                    },
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
