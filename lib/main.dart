@@ -15,6 +15,7 @@ class MortgageApp extends StatefulWidget {
 
 class _MortgageAppState extends State<MortgageApp> {
   Mortgage mortgage = Mortgage();
+  bool termsAccepted = false;
 
   void modifyMortgage() async {
     Mortgage? updatedMortgage = await Navigator.push<Mortgage>(
@@ -56,6 +57,37 @@ class _MortgageAppState extends State<MortgageApp> {
               const SizedBox(height: 16),
               Text(
                 'Total Payment: \$${mortgage.totalPayment().toStringAsFixed(2)}',
+              ),
+              CheckboxListTile(
+                title: const Text('Terms and Conditions'),
+                value: termsAccepted,
+                onChanged: (bool? value) {
+                  setState(() {
+                    termsAccepted = value ?? false;
+                  });
+
+                  if (value == true) {
+                    showDialog<void>(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text('Terms and Conditions'),
+                          content: const Text(
+                            'You have accepted the terms and conditions.',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                },
               ),
               const SizedBox(height: 32),
               ElevatedButton(
