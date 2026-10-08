@@ -3,13 +3,33 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MortgageApp());
+  runApp(const MortgageApp());
 }
 
-class MortgageApp extends StatelessWidget {
-  MortgageApp({super.key});
+class MortgageApp extends StatefulWidget {
+  const MortgageApp({super.key});
 
-  final Mortgage mortgage = Mortgage();
+  @override
+  State<MortgageApp> createState() => _MortgageAppState();
+}
+
+class _MortgageAppState extends State<MortgageApp> {
+  Mortgage mortgage = Mortgage();
+
+  void modifyMortgage() async {
+    Mortgage? updatedMortgage = await Navigator.push<Mortgage>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ModifyScreen(mortgage: mortgage),
+      ),
+    );
+
+    if (updatedMortgage != null) {
+      setState(() {
+        mortgage = updatedMortgage;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,14 +59,7 @@ class MortgageApp extends StatelessWidget {
               ),
               const SizedBox(height: 32),
               ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ModifyScreen(),
-                    ),
-                  );
-                },
+                onPressed: modifyMortgage,
                 child: const Text('MODIFY DATA'),
               ),
             ],
@@ -82,28 +95,34 @@ class Mortgage {
 }
 
 class ModifyScreen extends StatefulWidget {
-  const ModifyScreen({super.key});
+  const ModifyScreen({super.key, required this.mortgage});
+
+  final Mortgage mortgage;
 
   @override
   State<ModifyScreen> createState() => _ModifyScreenState();
 }
 
 class _ModifyScreenState extends State<ModifyScreen> {
-  final TextEditingController amountController = TextEditingController(
-    text: '100000',
-  );
-  final TextEditingController yearsController = TextEditingController(text: '30');
+  final TextEditingController amountController = TextEditingController();
+  final TextEditingController yearsController = TextEditingController();
   final List<double> rates = [];
-  int selectedRateIndex = 6;
-  double selectedRate = 0.035;
+  int selectedRateIndex = 0;
+  double selectedRate = 0;
 
   @override
   void initState() {
     super.initState();
 
+    amountController.text = widget.mortgage.amount.toString();
+    yearsController.text = widget.mortgage.years.toString();
+
     for (int index = 0; index <= 52; index++) {
       rates.add(0.02 + (index * 0.0025));
     }
+
+    selectedRateIndex = ((widget.mortgage.rate - 0.02) / 0.0025).round();
+    selectedRate = rates[selectedRateIndex];
   }
 
   @override
@@ -159,7 +178,20 @@ class _ModifyScreenState extends State<ModifyScreen> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
+                double amount =
+                    double.tryParse(amountController.text) ??
+                    widget.mortgage.amount;
+                int years =
+                    int.tryParse(yearsController.text) ?? widget.mortgage.years;
+
+                Navigator.pop(
+                  context,
+                  Mortgage(
+                    amount: amount,
+                    years: years,
+                    rate: selectedRate,
+                  ),
+                );
               },
               child: const Text('DONE'),
             ),
