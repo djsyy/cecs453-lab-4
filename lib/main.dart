@@ -112,26 +112,52 @@ class _MortgageScreenState extends State<MortgageScreen> {
 }
 
 class Mortgage {
-  double amount;
-  int years;
-  double rate;
+  double _amount = 100000;
+  int _years = 30;
+  double _rate = 0.035;
 
   // Values come from the lab example
   Mortgage({
-    this.amount = 100000,
-    this.years = 30,
-    this.rate = 0.035,
-  });
+    double amount = 100000,
+    int years = 30,
+    double rate = 0.035,
+  }) {
+    setAmount(amount);
+    setYears(years);
+    setRate(rate);
+  }
+
+  double get amount => _amount;
+  int get years => _years;
+  double get rate => _rate;
+
+  void setAmount(double newAmount) {
+    if (newAmount >= 0) {
+      _amount = newAmount;
+    }
+  }
+
+  void setYears(int newYears) {
+    if (newYears > 0) {
+      _years = newYears;
+    }
+  }
+
+  void setRate(double newRate) {
+    if (newRate >= 0) {
+      _rate = newRate;
+    }
+  }
 
   double monthlyPayment() {
-    double monthlyRate = rate / 12;
-    double temp = pow(1 / (1 + monthlyRate), years * 12).toDouble();
+    double monthlyRate = _rate / 12;
+    double temp = pow(1 / (1 + monthlyRate), _years * 12).toDouble();
 
-    return amount * monthlyRate / (1 - temp);
+    return _amount * monthlyRate / (1 - temp);
   }
 
   double totalPayment() {
-    return monthlyPayment() * years * 12;
+    return monthlyPayment() * _years * 12;
   }
 }
 
@@ -224,6 +250,14 @@ class _ModifyScreenState extends State<ModifyScreen> {
                     widget.mortgage.amount;
                 int years =
                     int.tryParse(yearsController.text) ?? widget.mortgage.years;
+
+                if (amount < 0) {
+                  amount = widget.mortgage.amount;
+                }
+
+                if (years <= 0) {
+                  years = widget.mortgage.years;
+                }
 
                 Navigator.pop(
                   context,
