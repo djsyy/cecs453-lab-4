@@ -6,14 +6,26 @@ void main() {
   runApp(const MortgageApp());
 }
 
-class MortgageApp extends StatefulWidget {
+class MortgageApp extends StatelessWidget {
   const MortgageApp({super.key});
 
   @override
-  State<MortgageApp> createState() => _MortgageAppState();
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      title: 'Mortgage Calculator',
+      home: MortgageScreen(),
+    );
+  }
 }
 
-class _MortgageAppState extends State<MortgageApp> {
+class MortgageScreen extends StatefulWidget {
+  const MortgageScreen({super.key});
+
+  @override
+  State<MortgageScreen> createState() => _MortgageScreenState();
+}
+
+class _MortgageScreenState extends State<MortgageScreen> {
   Mortgage mortgage = Mortgage();
   bool termsAccepted = false;
 
@@ -34,9 +46,7 @@ class _MortgageAppState extends State<MortgageApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Mortgage Calculator',
-      home: Scaffold(
+    return Scaffold(
         appBar: AppBar(title: const Text('Mortgage Calculator')),
         body: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -97,7 +107,6 @@ class _MortgageAppState extends State<MortgageApp> {
             ],
           ),
         ),
-      ),
     );
   }
 }
