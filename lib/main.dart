@@ -32,9 +32,7 @@ class _MortgageScreenState extends State<MortgageScreen> {
   void modifyMortgage() async {
     Mortgage? updatedMortgage = await Navigator.push<Mortgage>(
       context,
-      MaterialPageRoute(
-        builder: (context) => ModifyScreen(mortgage: mortgage),
-      ),
+      MaterialPageRoute(builder: (context) => ModifyScreen(mortgage: mortgage)),
     );
 
     if (updatedMortgage != null) {
@@ -47,66 +45,64 @@ class _MortgageScreenState extends State<MortgageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Mortgage Calculator')),
-        body: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Mortgage Amount: \$${mortgage.amount.toStringAsFixed(2)}'),
-              const SizedBox(height: 16),
-              Text('Number of Years: ${mortgage.years}'),
-              const SizedBox(height: 16),
-              Text(
-                'Interest Rate: ${(mortgage.rate * 100).toStringAsFixed(2)}%',
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Monthly Payment: \$${mortgage.monthlyPayment().toStringAsFixed(2)}',
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Total Payment: \$${mortgage.totalPayment().toStringAsFixed(2)}',
-              ),
-              CheckboxListTile(
-                title: const Text('Terms and Conditions'),
-                value: termsAccepted,
-                onChanged: (bool? value) {
-                  setState(() {
-                    termsAccepted = value ?? false;
-                  });
+      appBar: AppBar(title: const Text('Mortgage Calculator')),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Mortgage Amount: \$${mortgage.amount.toStringAsFixed(2)}'),
+            const SizedBox(height: 16),
+            Text('Number of Years: ${mortgage.years}'),
+            const SizedBox(height: 16),
+            Text('Interest Rate: ${(mortgage.rate * 100).toStringAsFixed(2)}%'),
+            const SizedBox(height: 16),
+            Text(
+              'Monthly Payment: \$${mortgage.monthlyPayment().toStringAsFixed(2)}',
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Total Payment: \$${mortgage.totalPayment().toStringAsFixed(2)}',
+            ),
+            CheckboxListTile(
+              title: const Text('Terms and Conditions'),
+              value: termsAccepted,
+              onChanged: (bool? value) {
+                setState(() {
+                  termsAccepted = value ?? false;
+                });
 
-                  if (value == true) {
-                    showDialog<void>(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: const Text('Terms and Conditions'),
-                          content: const Text(
-                            'You have accepted the terms and conditions.',
+                if (value == true) {
+                  showDialog<void>(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Terms and Conditions'),
+                        content: const Text(
+                          'You have accepted the terms and conditions.',
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('OK'),
                           ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }
-                },
-              ),
-              const SizedBox(height: 32),
-              ElevatedButton(
-                onPressed: modifyMortgage,
-                child: const Text('MODIFY DATA'),
-              ),
-            ],
-          ),
+                        ],
+                      );
+                    },
+                  );
+                }
+              },
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton(
+              onPressed: modifyMortgage,
+              child: const Text('MODIFY DATA'),
+            ),
+          ],
         ),
+      ),
     );
   }
 }
@@ -117,11 +113,7 @@ class Mortgage {
   double _rate = 0.035;
 
   // Values come from the lab example
-  Mortgage({
-    double amount = 100000,
-    int years = 30,
-    double rate = 0.035,
-  }) {
+  Mortgage({double amount = 100000, int years = 30, double rate = 0.035}) {
     setAmount(amount);
     setYears(years);
     setRate(rate);
@@ -172,8 +164,8 @@ class ModifyScreen extends StatefulWidget {
 
 class _ModifyScreenState extends State<ModifyScreen> {
   final TextEditingController amountController = TextEditingController();
-  final TextEditingController yearsController = TextEditingController();
   final List<double> rates = [];
+  int selectedYears = 30;
   int selectedRateIndex = 0;
   double selectedRate = 0;
 
@@ -182,7 +174,10 @@ class _ModifyScreenState extends State<ModifyScreen> {
     super.initState();
 
     amountController.text = widget.mortgage.amount.toString();
-    yearsController.text = widget.mortgage.years.toString();
+
+    if ([10, 15, 30].contains(widget.mortgage.years)) {
+      selectedYears = widget.mortgage.years;
+    }
 
     for (int index = 0; index <= 52; index++) {
       rates.add(0.02 + (index * 0.0025));
@@ -195,7 +190,6 @@ class _ModifyScreenState extends State<ModifyScreen> {
   @override
   void dispose() {
     amountController.dispose();
-    yearsController.dispose();
     super.dispose();
   }
 
@@ -213,10 +207,27 @@ class _ModifyScreenState extends State<ModifyScreen> {
               decoration: const InputDecoration(labelText: 'Mortgage Amount'),
             ),
             const SizedBox(height: 16),
-            TextField(
-              controller: yearsController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'Number of Years'),
+            RadioGroup<int>(
+              groupValue: selectedYears,
+              onChanged: (int? value) {
+                if (value != null) {
+                  setState(() {
+                    selectedYears = value;
+                  });
+                }
+              },
+              child: const Row(
+                children: [
+                  Text('Years'),
+                  Spacer(),
+                  Radio<int>(value: 10),
+                  Text('10'),
+                  Radio<int>(value: 15),
+                  Text('15'),
+                  Radio<int>(value: 30),
+                  Text('30'),
+                ],
+              ),
             ),
             const SizedBox(height: 24),
             const Align(
@@ -248,22 +259,16 @@ class _ModifyScreenState extends State<ModifyScreen> {
                 double amount =
                     double.tryParse(amountController.text) ??
                     widget.mortgage.amount;
-                int years =
-                    int.tryParse(yearsController.text) ?? widget.mortgage.years;
 
                 if (amount < 0) {
                   amount = widget.mortgage.amount;
-                }
-
-                if (years <= 0) {
-                  years = widget.mortgage.years;
                 }
 
                 Navigator.pop(
                   context,
                   Mortgage(
                     amount: amount,
-                    years: years,
+                    years: selectedYears,
                     rate: selectedRate,
                   ),
                 );
